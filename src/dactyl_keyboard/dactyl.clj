@@ -13,7 +13,7 @@
 ;; Shape parameters ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(def nrows 5)
+(def nrows 6)
 (def ncols 7)
 
 (def α (/ π 12))                       ; curvature of the columns
@@ -28,7 +28,7 @@
 
 (def extra-row true)                   ; adds an extra bottom row to the outer column(s)
 (def inner-column true)                ; adds an extra inner column (two less rows than nrows)
-(def thumb-style "cf")                 ; toggles between "manuform", "mini", and "cf" thumb cluster
+(def thumb-style "manuform")                 ; toggles between "manuform", "mini", and "cf" thumb cluster
 
 (def column-style :standard)
 
@@ -68,9 +68,7 @@
 (def extra-cornerrow (if extra-row lastrow cornerrow))
 (def innercol-offset (if inner-column 1 0))
 
-;;;;;;;;;;;;;;;;;
-;; Switch Hole ;;
-;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def keyswitch-height 14.15)
 (def keyswitch-width 14.15)
@@ -83,6 +81,29 @@
 (def retention-tab-hole-thickness (- (+ plate-thickness 0.5) retention-tab-thickness))
 (def mount-width (+ keyswitch-width 3.2))
 (def mount-height (+ keyswitch-height 2.7))
+
+
+;;;;;;;;;;;;;;;;;;;
+;; Kailh hotswap ;;
+;;;;;;;;;;;;;;;;;;;
+
+(def kaylih-hotswap-plate
+     (let [
+          spacer (->>    (cube (+ keyswitch-width 3) 1.5 (+ plate-thickness 0.5))
+                              (translate [0 0 -4]))
+
+
+     ]
+
+     spacer
+     )
+)
+
+;;;;;;;;;;;;;;;;;
+;; Switch Hole ;;
+;;;;;;;;;;;;;;;;;
+
+
 
 (def single-plate
   (let [top-wall (->> (cube (+ keyswitch-width 3) 1.5 (+ plate-thickness 0.5))
@@ -109,7 +130,7 @@
                                  (mirror [1 0 0])
                                  (mirror [0 1 0])))]
     (difference
-     (union plate-half
+     (union kaylih-hotswap-plate plate-half
             (->> plate-half
                  (mirror [1 0 0])
                  (mirror [0 1 0])))
