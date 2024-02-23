@@ -89,13 +89,33 @@
 
 (def kaylih-hotswap-plate
      (let [
-          spacer (->>    (cube (+ keyswitch-width 3) 1.5 (+ plate-thickness 0.5))
-                              (translate [0 0 -4]))
-
+          spacer (->>    (difference (->> (cube (+ keyswitch-width 2) (+ keyswitch-height 2) 0.5)
+                                        (translate [0 0 -0.75]))
+                                   (->> (cube (+ keyswitch-width 1) (+ keyswitch-height 1) 1)
+                                        (translate [0 0 -0.75]))))
+          bottom-plate (->> (cube (+ keyswitch-width 2) (+ keyswitch-height 2) 0.5)
+                                   (translate [0 0 -1.25]))
+          keyswitch-pole (->> (cylinder 2.2 1) (translate [0 0 -1.25]))
+          hotswap-holes (->> (union
+                                   (->> (cylinder 1.5 1) (translate [-3.81 2.54 -1.25]))
+                                   (->> (cylinder 1.5 1) (translate [2.54 5.08 -1.25]))
+                         ))
+          directmount-holes (->> (union
+                                   (->> (cylinder 0.7 1) (translate [5.08 0 -1.25]))
+                                   (->> (cylinder 0.7 1) (translate [-5.08 0 -1.25]))
+                         ))
+          diode-hole (->> (union
+                                   (->> (cylinder 0.5 1) (translate [-3.81 -5.08 -1.25]))
+                                   (->> (cylinder 0.5 1) (translate [3.81 -5.08 -1.25]))
+                                   (->> (cube 7.62 1 1) (translate [0 -5.08 -1.25]))
+                         ))
 
      ]
 
-     spacer
+          (union spacer
+               (difference bottom-plate keyswitch-pole hotswap-holes directmount-holes diode-hole)
+
+          )
      )
 )
 
@@ -1445,7 +1465,8 @@
                                  usb-holder-notch-r
                                  screw-insert-holes))
                    (translate [0 0 -20] (cube 350 350 40))))
-
+(spit "things/single-plate.scad"
+          (write-scad single-plate))
 (spit "things/right.scad"
       (write-scad model-right))
 
