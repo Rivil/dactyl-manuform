@@ -26,7 +26,7 @@
 (def first-15u-row 0)                  ; controls which should be the first row to have 1.5u keys on the outer column
 (def last-15u-row 3)                   ; controls which should be the last row to have 1.5u keys on the outer column
 
-(def extra-row true)                   ; adds an extra bottom row to the outer column(s)
+(def extra-row false)                   ; adds an extra bottom row to the outer column(s)
 (def inner-column true)                ; adds an extra inner column (two less rows than nrows)
 (def thumb-style "manuform")                 ; toggles between "manuform", "mini", and "cf" thumb cluster
 
@@ -89,33 +89,44 @@
 
 (def kaylih-hotswap-plate
      (let [
-          spacer (->>    (difference (->> (cube (+ keyswitch-width 2) (+ keyswitch-height 2) 0.5)
+          spacer (->>    (difference (->> (cube (+ keyswitch-width 3.5) (+ keyswitch-height 3) 0.5)
                                         (translate [0 0 -0.75]))
                                    (->> (cube (+ keyswitch-width 1) (+ keyswitch-height 1) 1)
                                         (translate [0 0 -0.75]))))
-          bottom-plate (->> (cube (+ keyswitch-width 2) (+ keyswitch-height 2) 0.5)
+          bottom-plate (->> (cube (+ keyswitch-width 3.5) (+ keyswitch-height 3) 0.5)
                                    (translate [0 0 -1.25]))
-          keyswitch-pole (->> (cylinder 2.2 1) (translate [0 0 -1.25]))
+          keyswitch-pole (->> (cylinder 2.2 4) (translate [0 0 -2.25]))
           hotswap-holes (->> (union
-                                   (->> (cylinder 1.5 1) (translate [-3.81 2.54 -1.25]))
-                                   (->> (cylinder 1.5 1) (translate [2.54 5.08 -1.25]))
+                                   (->> (cylinder 1.8 4) (translate [-3.81 2.54 -2.25]))
+                                   (->> (cylinder 1.8 4) (translate [2.54 5.08 -2.25]))
                          ))
           directmount-holes (->> (union
-                                   (->> (cylinder 0.7 1) (translate [5.08 0 -1.25]))
-                                   (->> (cylinder 0.7 1) (translate [-5.08 0 -1.25]))
+                                   (->> (cylinder 0.9 4) (translate [5.08 0 -2.25]))
+                                   (->> (cylinder 0.7 4) (translate [-5.08 0 -2.25]))
                          ))
           diode-hole (->> (union
                                    (->> (cylinder 0.5 1) (translate [-3.81 -5.08 -1.25]))
                                    (->> (cylinder 0.5 1) (translate [3.81 -5.08 -1.25]))
                                    (->> (cube 7.62 1 1) (translate [0 -5.08 -1.25]))
                          ))
+          top-holder (->> (cube keyswitch-width 1.5 1.75) (translate [0 (+ (/ keyswitch-height 2) 0.75) -2.35]))
+          middle-holder (->> (cube 8 2 1.75) (translate [4.9 (- (/ keyswitch-height 2) 5.2) -2.35]))
+          bottom-holder (->> (cube 8 2 1.75) (translate [-4.8 (- (/ keyswitch-height 2) 7.3) -2.35]))
 
+          holder-cut1 (->> (cube 2 1 1) (translate [(- (/ keyswitch-width 2) 2) (+ (/ keyswitch-height 2) 1.25) -2.25]))
+          holder-cut2 (->> (mirror [-1 0 0] holder-cut1))
+          holder-cut3 (->> (cube 2 1 1) (translate [7 (- (/ keyswitch-height 2) 6) -2.25]))
+          holder-cut4 (->> (cube 2 1 1) (translate [-7 (- (/ keyswitch-height 2) 8.3) -2.25]))
+
+          hotswap-holder (->> (difference
+                                   (union top-holder middle-holder bottom-holder )
+                                   (union holder-cut1 holder-cut2 holder-cut3 holder-cut4)
+                              ))
+
+          unions (->> (union spacer  bottom-plate hotswap-holder))
+          holes (->> (union  keyswitch-pole hotswap-holes directmount-holes diode-hole))
      ]
-
-          (union spacer
-               (difference bottom-plate keyswitch-pole hotswap-holes directmount-holes diode-hole)
-
-          )
+          (rotate π [0 0 1] (difference unions holes))
      )
 )
 
@@ -1352,7 +1363,7 @@
     (def screw-offset-br [7 14 0]))
 (when (and pinky-15u (false? extra-row))
     (def screw-offset-tr [1 7 0])
-    (def screw-offset-br [6.5 15.5 0]))
+    (def screw-offset-br [-3.5 15.5 0]))
 (when (and (false? pinky-15u) extra-row)
     (def screw-offset-tr [-3.5 6.5 0])
     (def screw-offset-br [-3.5 -6.5 0]))
